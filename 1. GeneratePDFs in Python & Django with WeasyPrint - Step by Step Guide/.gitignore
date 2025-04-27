@@ -1,0 +1,45 @@
+# Entornos virtuales
+venv/
+.env/
+
+# Archivos de Python compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de datos SQLite
+db.sqlite3
+
+# Archivos de migraciones si quieres (opcional)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Archivos de configuración sensibles
+.env
+*.env
+
+# Archivos de logs
+*.log
+
+# Archivos de subida/media (si no quieres trackearlos)
+media/
+
+# Archivos de PDFs u otros generados
+*.pdf
+
+# Archivos de WeasyPrint cacheados
+.weasyprint/
+
+# Configuración de IDEs/editores
+.vscode/
+.idea/
+*.swp
+
+# Archivos de cobertura de tests
+htmlcov/
+.coverage
+coverage.xml
+
+# Docker
+*.pid

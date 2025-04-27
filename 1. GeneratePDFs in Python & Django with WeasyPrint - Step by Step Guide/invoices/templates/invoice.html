@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice</title>
+</head>
+<body>
+    <header id="header">
+        <h1>Invoice</h1>
+        <p>{{ date }}</p>
+    </header>
+
+    <section class="customer-info">
+        <h2>Client</h2>
+        <p><strong>Name:</strong> {{ owner }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+    </section>
+
+    <section class="invoice-info">
+        <h2>Details of invoice</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in purchased_items %}
+                <tr>
+                    <td>{{ item.item.name }}</td>
+                    <td>{{ item.item.price }} €</td>
+                    <td>{{ item.total_items }}</td>
+                    <td>{{ item.total_price }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <div class="total">
+        Total: {{ total_price }} €
+    </div>
+</body>
+</html>
