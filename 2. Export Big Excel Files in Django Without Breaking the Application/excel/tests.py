@@ -12,7 +12,7 @@ class ExampleExportViewTests(TestCase):
         Example.objects.create(col_a='A1', col_b='B1', col_c='C1', col_d='D1')
         Example.objects.create(col_a='A2', col_b='B2', col_c='C2', col_d='D2')
 
-        response = self.client.get(reverse('example-export'), {
+        response = self.client.get(reverse('export_examples_v1'), {
             'col_a': 'A1',
             'col_b': 'B1',
             'col_c': 'C1',
@@ -40,7 +40,7 @@ class ExampleExportViewTests(TestCase):
     def test_uses_filename_query_param_for_download(self):
         Example.objects.create(col_a='A1', col_b='B1', col_c='C1', col_d='D1')
 
-        response = self.client.get(reverse('example-export'), {
+        response = self.client.get(reverse('export_examples_v1'), {
             'col_a': 'A1',
             'col_b': 'B1',
             'col_c': 'C1',
@@ -55,7 +55,7 @@ class ExampleExportViewTests(TestCase):
         )
 
     def test_rejects_filename_over_limit(self):
-        response = self.client.get(reverse('example-export'), {
+        response = self.client.get(reverse('export_examples_v1'), {
             'col_a': 'A1',
             'col_b': 'B1',
             'col_c': 'C1',

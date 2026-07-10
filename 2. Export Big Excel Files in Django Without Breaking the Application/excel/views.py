@@ -11,7 +11,7 @@ from excel.serializers import ExampleExportSerializer
 
 
 @api_view(['GET'])
-def export_examples(request):
+def export_examples_v1(request):
     serializer = ExampleExportSerializer(data=request.query_params)
     serializer.is_valid(raise_exception=True)
 
@@ -27,7 +27,7 @@ def export_examples(request):
     worksheet.title = 'Examples'
     worksheet.append(EXPORT_COLUMNS)
 
-    rows = queryset.values_list(*EXPORT_COLUMNS).iterator()
+    rows = queryset.values_list(*EXPORT_COLUMNS)
     for row in rows:
         worksheet.append(row)
 
