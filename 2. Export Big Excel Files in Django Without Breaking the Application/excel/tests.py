@@ -1,10 +1,12 @@
+import csv
 from io import BytesIO
+from io import StringIO
 
 from django.test import TestCase
 from django.urls import reverse
 from openpyxl import load_workbook
 
-from excel.constants import EXCEL_CONTENT_TYPE
+from excel.constants import CSV_CONTENT_TYPE, EXCEL_CONTENT_TYPE
 from excel.models import Example, LightweightExample
 
 
@@ -69,7 +71,7 @@ class ExampleExportViewTests(TestCase):
 
 
 class ExampleExportV2ViewTests(TestCase):
-    def test_streams_filtered_examples_from_a_temporary_xlsx_file(self):
+    def test_streams_filtered_examples_from_a_bucket_csv_file(self):
         Example.objects.create(col_a='A1', col_b='B1', col_c='C1', col_d='D1')
         Example.objects.create(col_a='A2', col_b='B2', col_c='C2', col_d='D2')
 
@@ -85,13 +87,13 @@ class ExampleExportV2ViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response['Content-Disposition'],
-            'attachment; filename="streamed_examples.xlsx"',
+            'attachment; filename="streamed_examples.csv"',
         )
-        workbook = load_workbook(BytesIO(content), read_only=True)
-        rows = list(workbook['Examples'].values)
+        self.assertEqual(response['Content-Type'], CSV_CONTENT_TYPE)
+        rows = list(csv.reader(StringIO(content.decode('utf-8-sig'))))
         self.assertEqual(rows, [
-            ('col_a', 'col_b', 'col_c', 'col_d'),
-            ('A1', 'B1', 'C1', 'D1'),
+            ['col_a', 'col_b', 'col_c', 'col_d'],
+            ['A1', 'B1', 'C1', 'D1'],
         ])
 
 
