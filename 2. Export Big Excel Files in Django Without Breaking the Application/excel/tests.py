@@ -68,6 +68,33 @@ class ExampleExportViewTests(TestCase):
         self.assertIn('filename', response.json())
 
 
+class ExampleExportV2ViewTests(TestCase):
+    def test_streams_filtered_examples_from_a_temporary_xlsx_file(self):
+        Example.objects.create(col_a='A1', col_b='B1', col_c='C1', col_d='D1')
+        Example.objects.create(col_a='A2', col_b='B2', col_c='C2', col_d='D2')
+
+        response = self.client.get(reverse('export_examples_v2'), {
+            'col_a': 'A1',
+            'col_b': 'B1',
+            'col_c': 'C1',
+            'col_d': 'D1',
+            'filename': 'streamed examples',
+        })
+        content = b''.join(response.streaming_content)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename="streamed_examples.xlsx"',
+        )
+        workbook = load_workbook(BytesIO(content), read_only=True)
+        rows = list(workbook['Examples'].values)
+        self.assertEqual(rows, [
+            ('col_a', 'col_b', 'col_c', 'col_d'),
+            ('A1', 'B1', 'C1', 'D1'),
+        ])
+
+
 class LightweightExampleExportViewTests(TestCase):
     def test_exports_lightweight_examples_as_xlsx(self):
         LightweightExample.objects.create(name='item-01', value=40)

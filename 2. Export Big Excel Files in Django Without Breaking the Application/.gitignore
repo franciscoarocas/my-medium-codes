@@ -5,3 +5,5 @@ __pycache__/
 *.py[cod]
 db.sqlite3
 celery-worker*.log
+core/bucket/bucketLocal/files/*
+!core/bucket/bucketLocal/files/.gitkeep
