@@ -4,7 +4,7 @@ import string
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, transaction
 
-from excel.models import Example, LightweightExample
+from csv_export.models import Example, LightweightExample
 
 
 DEFAULT_COUNT = 2_000_000

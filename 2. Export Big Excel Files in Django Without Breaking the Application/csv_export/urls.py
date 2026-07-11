@@ -1,9 +1,9 @@
 from django.urls import path
 
-from excel.views import (
+from csv_export.views import (
     export_examples_v1,
     export_examples_v2,
-    list_lightweight_examples_v1,
+    export_lightweight_examples_v1,
 )
 
 
@@ -12,7 +12,7 @@ urlpatterns = [
     path('examples/export/v2/', export_examples_v2, name='export_examples_v2'),
     path(
         'examples/lightweight/v1/',
-        list_lightweight_examples_v1,
-        name='list_lightweight_examples_v1',
+        export_lightweight_examples_v1,
+        name='export_lightweight_examples_v1',
     ),
 ]

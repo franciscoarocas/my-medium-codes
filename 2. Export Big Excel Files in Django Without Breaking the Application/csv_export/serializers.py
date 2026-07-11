@@ -1,12 +1,12 @@
 from django.utils.text import get_valid_filename
 from rest_framework import serializers
 
-from excel.constants import (
-    DEFAULT_CSV_EXPORT_FILENAME,
+from csv_export.constants import (
     DEFAULT_EXPORT_FILENAME,
+    DEFAULT_LIGHTWEIGHT_EXPORT_FILENAME,
     EXPORT_COLUMNS,
 )
-from excel.models import Example
+from csv_export.models import Example
 
 
 class ExampleExportSerializer(serializers.ModelSerializer):
@@ -23,8 +23,8 @@ class ExampleExportSerializer(serializers.ModelSerializer):
 
     def validate_filename(self, filename):
         filename = get_valid_filename(filename or DEFAULT_EXPORT_FILENAME)
-        if not filename.lower().endswith('.xlsx'):
-            filename = f'{filename}.xlsx'
+        if not filename.lower().endswith('.csv'):
+            filename = f'{filename}.csv'
         return filename
 
 
@@ -33,30 +33,13 @@ class LightweightExampleExportSerializer(serializers.Serializer):
         max_length=100,
         required=False,
         allow_blank=True,
-        default='lightweight_examples.xlsx',
+        default=DEFAULT_LIGHTWEIGHT_EXPORT_FILENAME,
     )
 
     def validate_filename(self, filename):
-        filename = get_valid_filename(filename or 'lightweight_examples.xlsx')
-        if not filename.lower().endswith('.xlsx'):
-            filename = f'{filename}.xlsx'
-        return filename
-
-
-class ExampleCSVExportSerializer(serializers.ModelSerializer):
-    filename = serializers.CharField(
-        max_length=100,
-        required=False,
-        allow_blank=True,
-        default=DEFAULT_CSV_EXPORT_FILENAME,
-    )
-
-    class Meta:
-        model = Example
-        fields = (*EXPORT_COLUMNS, 'filename')
-
-    def validate_filename(self, filename):
-        filename = get_valid_filename(filename or DEFAULT_CSV_EXPORT_FILENAME)
+        filename = get_valid_filename(
+            filename or DEFAULT_LIGHTWEIGHT_EXPORT_FILENAME,
+        )
         if not filename.lower().endswith('.csv'):
             filename = f'{filename}.csv'
         return filename

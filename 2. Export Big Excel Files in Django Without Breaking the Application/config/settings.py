@@ -35,7 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'excel',
+    'csv_export',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',

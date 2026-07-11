@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('excel', '0001_initial'),
+        ('csv_export', '0001_initial'),
     ]
 
     operations = [

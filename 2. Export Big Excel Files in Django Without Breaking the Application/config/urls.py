@@ -19,5 +19,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('excel/', include('excel.urls')),
+    path('csv/', include('csv_export.urls')),
 ]
