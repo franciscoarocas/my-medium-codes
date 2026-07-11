@@ -22,3 +22,18 @@ class ExampleExportSerializer(serializers.ModelSerializer):
         if not filename.lower().endswith('.xlsx'):
             filename = f'{filename}.xlsx'
         return filename
+
+
+class LightweightExampleExportSerializer(serializers.Serializer):
+    filename = serializers.CharField(
+        max_length=100,
+        required=False,
+        allow_blank=True,
+        default='lightweight_examples.xlsx',
+    )
+
+    def validate_filename(self, filename):
+        filename = get_valid_filename(filename or 'lightweight_examples.xlsx')
+        if not filename.lower().endswith('.xlsx'):
+            filename = f'{filename}.xlsx'
+        return filename

@@ -4,7 +4,8 @@ from django.test import TestCase
 from django.urls import reverse
 from openpyxl import load_workbook
 
-from excel.models import Example
+from excel.constants import EXCEL_CONTENT_TYPE
+from excel.models import Example, LightweightExample
 
 
 class ExampleExportViewTests(TestCase):
@@ -65,3 +66,38 @@ class ExampleExportViewTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn('filename', response.json())
+
+
+class LightweightExampleExportViewTests(TestCase):
+    def test_exports_lightweight_examples_as_xlsx(self):
+        LightweightExample.objects.create(name='item-01', value=40)
+        LightweightExample.objects.create(name='item-02', value=80)
+
+        response = self.client.get(reverse('list_lightweight_examples_v1'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], EXCEL_CONTENT_TYPE)
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename="lightweight_examples.xlsx"',
+        )
+
+        workbook = load_workbook(BytesIO(response.content))
+        rows = list(workbook['Lightweight Examples'].values)
+        self.assertEqual(rows, [
+            ('name', 'value'),
+            ('item-01', 40),
+            ('item-02', 80),
+        ])
+
+    def test_uses_filename_query_param_for_download(self):
+        response = self.client.get(
+            reverse('list_lightweight_examples_v1'),
+            {'filename': 'small export'},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename="small_export.xlsx"',
+        )

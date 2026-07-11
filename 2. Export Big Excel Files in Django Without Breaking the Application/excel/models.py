@@ -9,3 +9,11 @@ class Example(models.Model):
 
     def __str__(self):
         return f'{self.col_a} {self.col_b} {self.col_c} {self.col_d}'
+
+
+class LightweightExample(models.Model):
+    name = models.CharField(max_length=50)
+    value = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name

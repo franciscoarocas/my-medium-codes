@@ -1,8 +1,13 @@
 from django.urls import path
 
-from excel.views import export_examples_v1
+from excel.views import export_examples_v1, list_lightweight_examples_v1
 
 
 urlpatterns = [
     path('examples/export/v1/', export_examples_v1, name='export_examples_v1'),
+    path(
+        'examples/lightweight/v1/',
+        list_lightweight_examples_v1,
+        name='list_lightweight_examples_v1',
+    ),
 ]
