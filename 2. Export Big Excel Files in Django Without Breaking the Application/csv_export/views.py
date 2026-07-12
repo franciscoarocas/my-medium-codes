@@ -26,6 +26,7 @@ def export_examples_v1(request):
     filters = {
         column: serializer.validated_data[column]
         for column in EXPORT_COLUMNS
+        if column in serializer.validated_data
     }
     queryset = Example.objects.filter(**filters).order_by('id')
 
@@ -51,6 +52,7 @@ def export_examples_v2(request):
     filters = {
         column: serializer.validated_data[column]
         for column in EXPORT_COLUMNS
+        if column in serializer.validated_data
     }
     queryset = Example.objects.filter(**filters).order_by('id')
 

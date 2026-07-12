@@ -20,6 +20,10 @@ class ExampleExportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Example
         fields = (*EXPORT_COLUMNS, 'filename')
+        extra_kwargs = {
+            column: {'required': False}
+            for column in EXPORT_COLUMNS
+        }
 
     def validate_filename(self, filename):
         filename = get_valid_filename(filename or DEFAULT_EXPORT_FILENAME)
