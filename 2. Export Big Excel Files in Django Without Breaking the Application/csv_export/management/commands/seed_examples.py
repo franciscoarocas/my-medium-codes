@@ -7,7 +7,7 @@ from django.db import connection, transaction
 from csv_export.models import Example, LightweightExample
 
 
-DEFAULT_COUNT = 2_000_000
+DEFAULT_COUNT = 5_000_000
 DEFAULT_SEED = 42
 LIGHTWEIGHT_COUNT = 10
 VALUE_LENGTH = 16
@@ -17,7 +17,7 @@ ALPHABET = string.ascii_lowercase + string.digits
 class Command(BaseCommand):
     help = (
         'Replaces the Example tables with reproducible pseudorandom data. '
-        'By default it creates 2,000,000 Example rows and 10 lightweight rows '
+        'By default it creates 5,000,000 Example rows and 10 lightweight rows '
         'using seed 42.'
     )
 

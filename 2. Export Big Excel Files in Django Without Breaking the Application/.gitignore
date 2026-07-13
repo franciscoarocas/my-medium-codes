@@ -6,5 +6,7 @@ __pycache__/
 db.sqlite3
 celery-worker*.log
 *-benchmark*.log
+/v*-5m*.csv
+/v*-5m*.log
 core/bucket/bucketLocal/files/*
 !core/bucket/bucketLocal/files/.gitkeep
