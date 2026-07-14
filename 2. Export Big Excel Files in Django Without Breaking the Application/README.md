@@ -15,16 +15,20 @@ The benchmark used 5,000,000 rows, four simultaneous requests, four Gunicorn wor
 |---|---:|---:|
 | Simultaneous requests | 4 | 4 |
 | Completed exports | **0/4** | **4/4** |
-| Peak memory | **4,096 MiB** | **213.1 MiB** |
-| Average memory | 3,124.09 MiB | 206.02 MiB |
-| Peak CPU | 318.65% | 170.71% |
-| Average CPU | 56.90% | 73.55% |
-| Total observed duration | 306.72 s | ~289 s |
+| Peak memory | **4,096 MiB (100%)** | **213.30 MiB (5.21%)** |
+| Average memory | 3,254.20 MiB | 208.68 MiB |
+| Peak CPU | 389.11% | 160.38% |
+| Average CPU | 44.81% | 99.08% |
+| Total observed duration | 304.80 s | **153.83 s** |
 | OOM kill | **Yes** | **No** |
 | Workers lost | 4 | 0 |
 | Client errors | 4 | 0 |
 
 V2 reduced peak memory by approximately **94.8%**. Each resulting V2 CSV was 345,000,028 bytes, or about 329 MiB.
+
+![Peak and average memory used by V1 and V2](docs/images/benchmark-memory.svg)
+
+![Completed requests and observed duration for V1 and V2](docs/images/benchmark-outcomes.svg)
 
 ## How it works
 
@@ -72,7 +76,7 @@ Django REST Framework
 Redis ── Celery worker
 ```
 
-Celery and Redis provide the foundation for moving exports to background jobs. In the current implementation, the V1 and V2 endpoints still perform the export inside the HTTP request.
+The synchronous V2 endpoint remains available for a direct benchmark against V1. The production-oriented V2 flow submits the same memory-efficient export function to Celery, returns HTTP 202 immediately, exposes job status through Redis, and provides a download endpoint when the file is ready.
 
 ## Project structure
 
@@ -81,6 +85,7 @@ Celery and Redis provide the foundation for moving exports to background jobs. I
 ├── config/
 │   ├── celery.py                  # Celery initialization and configuration
 │   ├── settings.py                # Django, PostgreSQL, DRF, and Celery
+│   ├── test_settings.py           # SQLite and eager Celery tests
 │   ├── urls.py                    # Root URL configuration
 │   └── wsgi.py                    # WSGI entry point for Gunicorn
 ├── core/
@@ -93,7 +98,8 @@ Celery and Redis provide the foundation for moving exports to background jobs. I
 │   ├── constants.py               # Columns, filenames, and content type
 │   ├── models.py                  # Models used by the benchmarks
 │   ├── serializers.py             # Filter and filename validation
-│   ├── tasks.py                   # Basic Celery health check
+│   ├── services.py                # Shared memory-efficient export service
+│   ├── tasks.py                   # Celery export and health-check tasks
 │   ├── urls.py                    # Export endpoints
 │   └── views.py                   # V1 and V2 implementations
 ├── scripts/
@@ -113,6 +119,9 @@ Celery and Redis provide the foundation for moving exports to background jobs. I
 |---|---|---|
 | `GET` | `/csv/examples/export/v1/` | Complete in-memory export |
 | `GET` | `/csv/examples/export/v2/` | Temporary-file export |
+| `POST` | `/csv/examples/export/v2/jobs/` | Queue a memory-efficient Celery export |
+| `GET` | `/csv/examples/export/v2/jobs/{task_id}/` | Check export status |
+| `GET` | `/csv/examples/export/v2/jobs/{task_id}/download/` | Download a completed export |
 | `GET` | `/csv/examples/lightweight/v1/` | Small control export |
 
 The main endpoints accept:
@@ -128,11 +137,43 @@ http://localhost:8000/csv/examples/export/v2/?filename=examples.csv
 http://localhost:8000/csv/examples/export/v2/?col_a=abc&filename=filtered.csv
 ```
 
+### Asynchronous Celery flow
+
+Queue an export. Filters and `filename` use the same validation as the synchronous endpoints:
+
+```bash
+curl -X POST http://localhost:8000/csv/examples/export/v2/jobs/ \
+  -H "Content-Type: application/json" \
+  -d '{"filename":"examples.csv","col_a":"abc"}'
+```
+
+The API responds immediately with HTTP 202:
+
+```json
+{
+  "id": "682daa1c-89a1-4a2e-ae90-19a1db2ff14b",
+  "state": "PENDING",
+  "status_url": "http://localhost:8000/csv/examples/export/v2/jobs/682daa1c-89a1-4a2e-ae90-19a1db2ff14b/"
+}
+```
+
+Poll `status_url`. A successful job includes `download_url`:
+
+```json
+{
+  "id": "682daa1c-89a1-4a2e-ae90-19a1db2ff14b",
+  "state": "SUCCESS",
+  "download_url": "http://localhost:8000/csv/examples/export/v2/jobs/682daa1c-89a1-4a2e-ae90-19a1db2ff14b/download/"
+}
+```
+
+The download streams the completed CSV and removes the temporary file when the response closes.
+
 ## Requirements
 
 - Docker Desktop and Docker Compose.
 - A PostgreSQL server accessible from the host.
-- PowerShell to run the included stress-test scripts.
+- Windows PowerShell to run `run_stress_test.bat`.
 
 The `compose.yaml` file runs Redis, Django/Gunicorn, and Celery. PostgreSQL is not created by Compose: the container reaches the host database through `host.docker.internal`.
 
@@ -184,6 +225,12 @@ The command uses PostgreSQL `COPY`, seed 42, and replaces the existing data. A d
 
 ```powershell
 docker compose exec web python manage.py seed_examples --count 1000000
+```
+
+Run the isolated test suite without requiring PostgreSQL database-creation privileges:
+
+```powershell
+.\.venv\Scripts\python.exe manage.py test csv_export --settings=config.test_settings
 ```
 
 ## Running the benchmarks
@@ -257,23 +304,9 @@ Generated CSV files, metrics, and request logs match `/v*-5m*.csv` and `/v*-5m*.
 - Isolation: the web container is restarted before every scenario.
 - Metrics: `docker stats` samples throughout execution, individual client results, container state, and Gunicorn logs.
 
-## Latest measured results
+## Benchmark observations
 
-The following results were produced through `run_stress_test.bat` with the configuration above:
-
-| Metric | V1: in memory | V2: bounded memory |
-|---|---:|---:|
-| Concurrent requests | 4 | 4 |
-| Completed exports | **0/4** | **4/4** |
-| Observed duration | 304.80 s | **153.83 s** |
-| Peak memory | **4,096 MiB (100%)** | **213.30 MiB (5.21%)** |
-| Average memory | 3,254.20 MiB | **208.68 MiB** |
-| Peak CPU | 389.11% | 160.38% |
-| Average CPU | 44.81% | 99.08% |
-| OOM during the test | **Yes** | No |
-| Output per completed request | 0 bytes | 345,000,028 bytes |
-
-Execution time depends on PostgreSQL, host load, Docker, and disk performance. Memory behavior is the important invariant: V1 reaches the container limit, while V2 remains close to 200 MiB with the same concurrency and dataset.
+The single result table and charts at the top of this README come from the latest complete run of `run_stress_test.bat`. Execution time depends on PostgreSQL, host load, Docker, and disk performance. Memory behavior is the important invariant: V1 reaches the container limit, while V2 remains close to 200 MiB with the same concurrency and dataset.
 
 ### Observed V1 failure
 
@@ -311,11 +344,11 @@ CPU percentages can exceed 100% because Docker reports usage across multiple log
 
 ## Production considerations
 
-V2 solves the memory problem, but several operational decisions remain:
+V2 solves the memory problem, and the Celery API removes long-running generation from the HTTP request. Several operational decisions remain:
 
-- **File cleanup:** `BucketLocal` retains every generated CSV. Delete files after download or apply a periodic expiration policy.
+- **File cleanup:** downloaded files are removed when the response closes. A periodic expiration policy is still required for completed jobs that users never download.
 - **HTTP timeout:** benchmark duration varies with host and storage load. Large synchronous exports can still approach the configured 300-second timeout.
-- **Background jobs:** for operations this long, generating the file with Celery and notifying the user when it is ready is usually preferable.
+- **Result retention:** align Celery result expiration with temporary-file retention so job status and file availability expire together.
 - **Shared storage:** local disk works on one host. Multiple replicas should use object storage such as S3, Azure Blob Storage, or an equivalent service.
 - **Concurrency limits:** even with stable memory, PostgreSQL and the disk must handle four large concurrent reads and writes.
 - **Disk capacity:** four successful V2 requests create roughly 1.38 GB in `BucketLocal`, in addition to the four client downloads.

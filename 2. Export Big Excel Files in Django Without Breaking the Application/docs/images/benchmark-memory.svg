@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470" role="img" aria-labelledby="title desc">
+  <title id="title">Memory usage: in-memory V1 versus bounded-memory V2</title>
+  <desc id="desc">V1 peaks at 4096 MiB and averages 3254 MiB. V2 peaks at 213 MiB and averages 209 MiB.</desc>
+  <rect width="900" height="470" fill="#ffffff"/>
+  <text x="60" y="52" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#172033">Memory usage under four concurrent exports</text>
+  <text x="60" y="80" font-family="Arial, sans-serif" font-size="15" fill="#596579">5,000,000 rows · 4 GB container limit · lower is better</text>
+
+  <line x1="220" y1="115" x2="220" y2="390" stroke="#aab2c0"/>
+  <line x1="375" y1="115" x2="375" y2="390" stroke="#e1e5eb"/>
+  <line x1="530" y1="115" x2="530" y2="390" stroke="#e1e5eb"/>
+  <line x1="685" y1="115" x2="685" y2="390" stroke="#e1e5eb"/>
+  <line x1="840" y1="115" x2="840" y2="390" stroke="#aab2c0"/>
+
+  <text x="220" y="415" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#596579">0</text>
+  <text x="375" y="415" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#596579">1,024</text>
+  <text x="530" y="415" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#596579">2,048</text>
+  <text x="685" y="415" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#596579">3,072</text>
+  <text x="840" y="415" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#596579">4,096 MiB</text>
+
+  <text x="60" y="158" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">V1 peak</text>
+  <rect x="220" y="132" width="620" height="38" rx="4" fill="#d84a4a"/>
+  <text x="825" y="157" text-anchor="end" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">4,096 MiB · 100%</text>
+
+  <text x="60" y="222" font-family="Arial, sans-serif" font-size="16" fill="#172033">V1 average</text>
+  <rect x="220" y="196" width="493" height="38" rx="4" fill="#ef9a9a"/>
+  <text x="700" y="221" text-anchor="end" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#172033">3,254 MiB</text>
+
+  <text x="60" y="306" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">V2 peak</text>
+  <rect x="220" y="280" width="32" height="38" rx="4" fill="#2878c7"/>
+  <text x="265" y="305" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#172033">213 MiB · 5.21%</text>
+
+  <text x="60" y="370" font-family="Arial, sans-serif" font-size="16" fill="#172033">V2 average</text>
+  <rect x="220" y="344" width="32" height="38" rx="4" fill="#83b6e6"/>
+  <text x="265" y="369" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#172033">209 MiB</text>
+
+  <text x="60" y="452" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#2878c7">V2 reduced peak memory by 94.8%.</text>
+</svg>

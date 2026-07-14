@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470" role="img" aria-labelledby="title desc">
+  <title id="title">Benchmark outcomes and duration</title>
+  <desc id="desc">V1 completed zero of four exports in 304.8 seconds. V2 completed four of four exports in 153.83 seconds.</desc>
+  <rect width="900" height="470" fill="#ffffff"/>
+  <text x="60" y="52" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#172033">Same load, opposite outcomes</text>
+  <text x="60" y="80" font-family="Arial, sans-serif" font-size="15" fill="#596579">Four concurrent exports of 5,000,000 rows</text>
+
+  <text x="60" y="128" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#172033">Completed requests</text>
+  <line x1="220" y1="150" x2="780" y2="150" stroke="#e1e5eb"/>
+  <line x1="220" y1="245" x2="780" y2="245" stroke="#e1e5eb"/>
+  <text x="60" y="184" font-family="Arial, sans-serif" font-size="16" fill="#172033">V1</text>
+  <circle cx="240" cy="178" r="13" fill="#ffffff" stroke="#d84a4a" stroke-width="3"/>
+  <circle cx="285" cy="178" r="13" fill="#ffffff" stroke="#d84a4a" stroke-width="3"/>
+  <circle cx="330" cy="178" r="13" fill="#ffffff" stroke="#d84a4a" stroke-width="3"/>
+  <circle cx="375" cy="178" r="13" fill="#ffffff" stroke="#d84a4a" stroke-width="3"/>
+  <text x="430" y="184" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#d84a4a">0 / 4 · OOM killed</text>
+
+  <text x="60" y="229" font-family="Arial, sans-serif" font-size="16" fill="#172033">V2</text>
+  <circle cx="240" cy="223" r="13" fill="#2878c7"/>
+  <circle cx="285" cy="223" r="13" fill="#2878c7"/>
+  <circle cx="330" cy="223" r="13" fill="#2878c7"/>
+  <circle cx="375" cy="223" r="13" fill="#2878c7"/>
+  <text x="430" y="229" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#2878c7">4 / 4 · no OOM</text>
+
+  <text x="60" y="298" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#172033">Observed duration</text>
+  <text x="60" y="352" font-family="Arial, sans-serif" font-size="16" fill="#172033">V1</text>
+  <rect x="220" y="326" width="560" height="38" rx="4" fill="#d84a4a"/>
+  <text x="765" y="351" text-anchor="end" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">304.80 s · failed</text>
+
+  <text x="60" y="416" font-family="Arial, sans-serif" font-size="16" fill="#172033">V2</text>
+  <rect x="220" y="390" width="283" height="38" rx="4" fill="#2878c7"/>
+  <text x="488" y="415" text-anchor="end" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#ffffff">153.83 s</text>
+
+  <text x="565" y="415" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#2878c7">All four files delivered.</text>
+</svg>
