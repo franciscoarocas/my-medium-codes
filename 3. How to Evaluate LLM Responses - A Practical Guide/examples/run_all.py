@@ -5,7 +5,21 @@
         python -m examples.run_all --llm      -> also LLM as a judge and A/B (needs OPENAI_API_KEY in .env)
 """
 
+import logging
+import os
 import sys
+import warnings
+
+# Keep the demo output clean. This must run BEFORE importing torch / transformers:
+#   - PyTorch's "Redirects are not supported in Windows or MacOs" note
+#   - Hugging Face's "unauthenticated requests to the HF Hub" warning
+#   - The "Loading weights" progress bar
+os.environ.setdefault("TQDM_DISABLE", "1")
+os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
+os.environ.setdefault("HF_HUB_VERBOSITY", "error")
+os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
+logging.disable(logging.WARNING)
+warnings.filterwarnings("ignore")
 
 from evals.exact_match import exact_match
 from evals.functional import GENERATED_CODE, functional_correctness
